@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class ScanFactory {
 
-    private static final Map<Class<?>, List<Class<?>>> CLASS_MAP = new HashMap<>();
+    private static final Map<Class<?>, Set<Class<?>>> CLASS_MAP = new HashMap<>();
 
     /**
      * 扫描指定的项目路径下的所有class
@@ -25,6 +25,10 @@ public class ScanFactory {
     public static void scanPackage(String packagePath) {
         if (ToolsKit.isEmpty(packagePath)) {
             throw new DuangException("项目包路径前缀不能为空");
+        }
+
+        if (!CLASS_MAP.isEmpty()) {
+            return;
         }
 
         Set<Class<?>> classSet = ClassUtil.scanPackage(packagePath);
@@ -41,12 +45,12 @@ public class ScanFactory {
                     // 找出需要扫描的注解类
                     Class<?> annotactionClass = ScanAnnotationEnum.getAnnotactionClass(name);
                     if (null != annotactionClass) {
-                        List<Class<?>> classList = CLASS_MAP.get(annotactionClass);
-                        if (null == classList) {
-                            classList = new ArrayList<>();
+                        Set<Class<?>> clazzSet = CLASS_MAP.get(annotactionClass);
+                        if (null == clazzSet) {
+                            clazzSet = new HashSet<>();
                         }
-                        classList.add(clazz);
-                        CLASS_MAP.put(annotactionClass, classList);
+                        clazzSet.add(clazz);
+                        CLASS_MAP.put(annotactionClass, clazzSet);
                     }
                 }
             }
@@ -58,7 +62,7 @@ public class ScanFactory {
      * 其中key为需要扫描的注解类， value为添加了该注解的类List集合
      * @return
      */
-    public static Map<Class<?>, List<Class<?>>> getScanClassMap() {
+    public static Map<Class<?>, Set<Class<?>>> getScanClassMap() {
         return CLASS_MAP;
     }
 
@@ -67,7 +71,7 @@ public class ScanFactory {
      * @param annotationClass 注解类
      * @return
      */
-    public static List<Class<?>> getClassListByAnnotation(Class<?> annotationClass) {
+    public static Set<Class<?>> getClassListByAnnotation(Class<?> annotationClass) {
         return CLASS_MAP.get(annotationClass);
     }
 }

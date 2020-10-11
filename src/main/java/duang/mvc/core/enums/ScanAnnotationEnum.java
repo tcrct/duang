@@ -1,6 +1,7 @@
 package duang.mvc.core.enums;
 
 import duang.mvc.core.annotation.Controller;
+import duang.mvc.core.annotation.Handler;
 import duang.mvc.core.annotation.Service;
 
 import java.util.HashMap;
@@ -16,6 +17,7 @@ public enum ScanAnnotationEnum {
 
     CONTROLLER(Controller.class),
     SERVICE(Service.class),
+    HANDLER(Handler.class),
 
     ;
 

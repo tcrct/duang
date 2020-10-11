@@ -1,9 +1,27 @@
 package duang.utils;
 
+import duang.mvc.core.dto.HeadDto;
+
 import java.util.Collection;
 import java.util.Map;
 
 public class ToolsKit {
+
+    // 定义一个请求对象安全线程类
+    private static DuangThreadLocal<HeadDto> requestHeaderThreadLocal = new DuangThreadLocal<HeadDto>() {
+        @Override
+        public HeadDto initialValue() {
+            return new HeadDto();
+        }
+    };
+
+    /**
+     * 设置请求头DTO到ThreadLocal变量
+     * @param headDto       请求头DTO
+     */
+    public static void setThreadLocalDto(HeadDto headDto) {
+        requestHeaderThreadLocal.set(headDto);
+    }
 
     /***
      * 判断传入的对象是否为空
