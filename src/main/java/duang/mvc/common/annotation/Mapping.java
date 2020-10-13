@@ -1,6 +1,7 @@
 package duang.mvc.common.annotation;
 
 import duang.mvc.common.enums.HttpMethod;
+import duang.mvc.common.enums.MappingType;
 
 import java.lang.annotation.*;
 
@@ -33,6 +34,10 @@ public @interface Mapping {
      */
     String desc();
 
-
+    /**
+     * 映射类型，分URL与BUTTON
+     * @return
+     */
+    MappingType type() default MappingType.URL;
 
 }
