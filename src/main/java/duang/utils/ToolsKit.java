@@ -1,9 +1,12 @@
 package duang.utils;
 
-import duang.mvc.core.dto.HeadDto;
+import duang.mvc.common.dto.HeadDto;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ToolsKit {
 
@@ -78,6 +81,36 @@ public class ToolsKit {
             }
         }
         return !bool;
+    }
+
+    /**
+     * 构建过滤方法名集合，默认包含Object类里公共方法
+     * @param excludeMethodClass  如果有指定，则添加指定类下所有方法名
+     *
+     * @return
+     */
+    private static final Set<String> excludedMethodName = new HashSet<>();
+    public static Set<String> buildExcludedMethodName(Class<?>... excludeMethodClass) {
+        if(excludedMethodName.isEmpty()) {
+            Method[] objectMethods = Object.class.getDeclaredMethods();
+            for (Method m : objectMethods) {
+                excludedMethodName.add(m.getName());
+            }
+        }
+        Set<String> tmpExcludeMethodName = null;
+        if(null != excludeMethodClass) {
+            tmpExcludeMethodName = new HashSet<>();
+            for (Class excludeClass : excludeMethodClass) {
+                Method[] excludeMethods = excludeClass.getDeclaredMethods();
+                if (null != excludeMethods) {
+                    for (Method method : excludeMethods) {
+                        tmpExcludeMethodName.add(method.getName());
+                    }
+                }
+            }
+            tmpExcludeMethodName.addAll(excludedMethodName);
+        }
+        return (null == tmpExcludeMethodName) ? excludedMethodName : tmpExcludeMethodName;
     }
 
 }

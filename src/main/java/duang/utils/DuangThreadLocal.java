@@ -1,6 +1,6 @@
 package duang.utils;
 
-import duang.mvc.core.dto.HeadDto;
+import duang.mvc.common.dto.HeadDto;
 
 import java.util.Collections;
 import java.util.HashMap;

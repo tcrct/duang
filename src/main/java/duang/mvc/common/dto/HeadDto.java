@@ -1,4 +1,4 @@
-package duang.mvc.core.dto;
+package duang.mvc.common.dto;
 
 /**
  * 返回结果头部信息内容

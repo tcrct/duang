@@ -1,11 +1,8 @@
 package duang.mvc.handler;
 
-import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.setting.Setting;
-import cn.hutool.setting.SettingUtil;
 import duang.exception.DuangException;
-import duang.mvc.core.annotation.Handler;
+import duang.mvc.common.annotation.Handler;
 import duang.mvc.http.IRequest;
 import duang.mvc.http.IResponse;
 import duang.utils.ScanFactory;
@@ -27,7 +24,7 @@ public class HandlerFactory {
     /**
      * Controller执行前的处理器集合
      */
-    private static final List<IHandler> HANDLERS = new ArrayList<>();
+    private static final List<IHandler> HANDLERS_BEFORE = new ArrayList<>();
 
     /**
      * Controller执行后的处理器集合
@@ -41,16 +38,16 @@ public class HandlerFactory {
      * @param response
      * @return 如果任意一个handle返回false，则退出该请求处理
      */
-    public static boolean handler(IRequest request, IResponse response) {
+    public static boolean handlerBefore(IRequest request, IResponse response) {
 
-        if (HANDLERS.isEmpty()) {
+        if (HANDLERS_BEFORE.isEmpty()) {
             //添加初始化处理器，放在第1位
-            HANDLERS.add(new InitDuangHandler());
+            HANDLERS_BEFORE.add(new InitDuangHandler());
             initHandler();
         }
         IHandler handler = null;
         try {
-            for (Iterator<IHandler> iterator = HANDLERS.iterator(); iterator.hasNext(); ) {
+            for (Iterator<IHandler> iterator = HANDLERS_BEFORE.iterator(); iterator.hasNext(); ) {
                 handler = iterator.next();
                 boolean isNext = handler.handler(request, response);
                 if (!isNext) {
@@ -115,14 +112,15 @@ public class HandlerFactory {
             }
 
             if(!handlerBeforeTreeMap.isEmpty()) {
-                HANDLERS.addAll(handlerBeforeTreeMap.values());
+                HANDLERS_BEFORE.addAll(handlerBeforeTreeMap.values());
             }
             if(!handlerAfterTreeMap.isEmpty()) {
                 HANDLERS_AFTER.addAll(handlerAfterTreeMap.values());
             }
         } catch (Exception e) {
             LOGGER.warn("初始化请求拦截处理器时出错: {}，清空HANDLERS集合后退出", e.getMessage(), e);
-            HANDLERS.clear();
+            HANDLERS_BEFORE.clear();
+            HANDLERS_AFTER.clear();
         }
     }
 }

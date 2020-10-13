@@ -2,7 +2,7 @@ package duang.mvc.handler;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
-import duang.mvc.core.dto.HeadDto;
+import duang.mvc.common.dto.HeadDto;
 import duang.mvc.http.IRequest;
 import duang.mvc.http.IResponse;
 import duang.utils.ToolsKit;

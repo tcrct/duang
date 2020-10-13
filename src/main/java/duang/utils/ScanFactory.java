@@ -2,7 +2,7 @@ package duang.utils;
 
 import cn.hutool.core.util.ClassUtil;
 import duang.exception.DuangException;
-import duang.mvc.core.enums.ScanAnnotationEnum;
+import duang.mvc.common.enums.ScanAnnotation;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -43,7 +43,7 @@ public class ScanFactory {
                 for (Annotation annotation : annotations) {
                     String name = annotation.getClass().getName();
                     // 找出需要扫描的注解类
-                    Class<?> annotactionClass = ScanAnnotationEnum.getAnnotactionClass(name);
+                    Class<?> annotactionClass = ScanAnnotation.getAnnotactionClass(name);
                     if (null != annotactionClass) {
                         Set<Class<?>> clazzSet = CLASS_MAP.get(annotactionClass);
                         if (null == clazzSet) {
