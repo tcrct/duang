@@ -31,18 +31,17 @@ public class PluginFactory {
      */
     private static List<IPlugin> PLUGIN_AFTER_LIST = new ArrayList<>();
 
-
-    public static List<IPlugin> getPluginBeforeList() {
-        if (ToolsKit.isEmpty(PLUGIN_BEFORE_LIST)) {
+    public static void initPlugin() {
+        if (ToolsKit.isEmpty(PLUGIN_BEFORE_LIST) && ToolsKit.isEmpty(PLUGIN_AFTER_LIST)) {
             initPlugins();
         }
+    }
+
+    public static List<IPlugin> getPluginBeforeList() {
         return PLUGIN_BEFORE_LIST;
     }
 
     public static List<IPlugin> getPluginAfterList() {
-        if (ToolsKit.isEmpty(PLUGIN_AFTER_LIST)) {
-            initPlugins();
-        }
         return PLUGIN_AFTER_LIST;
     }
 

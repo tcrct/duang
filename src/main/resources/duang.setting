@@ -1,0 +1,5 @@
+#编码
+charset=UTF-8
+
+#系统扫描包路径前缀
+scan.package.path=com.duang.project

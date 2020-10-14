@@ -18,6 +18,7 @@
         <cglib.version>3.1</cglib.version>
         <hutool.version>5.3.5</hutool.version>
         <fastjson.version>1.2.73</fastjson.version>
+        <undertow.version>2.1.0.Final</undertow.version>
     </properties>
 
     <dependencies>
@@ -43,6 +44,24 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-core</artifactId>
+            <version>${undertow.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-servlet</artifactId>
+            <version>${undertow.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-websockets-jsr</artifactId>
+            <version>${undertow.version}</version>
         </dependency>
     </dependencies>
 

@@ -3,6 +3,7 @@ package duang.utils;
 import cn.hutool.core.util.ClassUtil;
 import duang.exception.DuangException;
 import duang.mvc.common.enums.ScanAnnotation;
+import duang.mvc.common.enums.SettingKey;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -17,6 +18,13 @@ public class ScanFactory {
 
     private static final Map<Class<?>, Set<Class<?>>> CLASS_MAP = new HashMap<>();
 
+    public static void scan() {
+        String packagePath = SettingKit.duang().get(SettingKey.SCAN_PACKAGE_PATH.getKey());
+        if (ToolsKit.isEmpty(packagePath)) {
+            throw new DuangException(String.format("请在[%s]]文件设置[%s]值，指定需要扫描的包路径", SettingKit.SETTING_FILE_NANE, SettingKey.SCAN_PACKAGE_PATH.getKey()));
+        }
+        scanPackage(packagePath);
+    }
     /**
      * 扫描指定的项目路径下的所有class
      *
@@ -41,7 +49,8 @@ public class ScanFactory {
             Annotation[] annotations = clazz.getAnnotations();
             if (null != annotations && annotations.length > 0) {
                 for (Annotation annotation : annotations) {
-                    String name = annotation.getClass().getName();
+                    Class<?> annotationType = annotation.annotationType();
+                    String name = annotationType.getName();
                     // 找出需要扫描的注解类
                     Class<?> annotactionClass = ScanAnnotation.getAnnotactionClass(name);
                     if (null != annotactionClass) {

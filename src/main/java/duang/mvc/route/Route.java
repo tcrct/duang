@@ -1,8 +1,7 @@
 package duang.mvc.route;
 import com.alibaba.fastjson.annotation.JSONField;
-import duang.mvc.common.enums.HttpMethod;
-
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * 路由对象
@@ -26,12 +25,62 @@ public class Route implements java.io.Serializable {
     @JSONField(serialize=false, deserialize = false)
     private Method method;
     /**
-     * Http 请求类型
-     */
-    private HttpMethod httpMethod;
-    /**
      * 请求的参数对象
      */
-    private RequestParam requestParam;
+    private List<RequestParam> requestParamList;
+    /**
+     * 返回对象
+     */
+    private Class<?> returnClass;
 
+    public Route() {
+    }
+
+    public Route(RequestMapping requestMapping, Class<?> controllerClass, Method method, List<RequestParam> requestParamList, Class<?> returnClass) {
+        this.requestMapping = requestMapping;
+        this.controllerClass = controllerClass;
+        this.method = method;
+        this.requestParamList = requestParamList;
+        this.returnClass = returnClass;
+    }
+
+    public RequestMapping getRequestMapping() {
+        return requestMapping;
+    }
+
+    public void setRequestMapping(RequestMapping requestMapping) {
+        this.requestMapping = requestMapping;
+    }
+
+    public Class<?> getControllerClass() {
+        return controllerClass;
+    }
+
+    public void setControllerClass(Class<?> controllerClass) {
+        this.controllerClass = controllerClass;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
+    }
+
+    public List<RequestParam> getRequestParamList() {
+        return requestParamList;
+    }
+
+    public void setRequestParamList(List<RequestParam> requestParamList) {
+        this.requestParamList = requestParamList;
+    }
+
+    public Class<?> getReturnClass() {
+        return returnClass;
+    }
+
+    public void setReturnClass(Class<?> returnClass) {
+        this.returnClass = returnClass;
+    }
 }

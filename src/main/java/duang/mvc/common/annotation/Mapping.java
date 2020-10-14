@@ -35,9 +35,9 @@ public @interface Mapping {
     String desc();
 
     /**
-     * 映射类型，分URL与BUTTON
+     * 映射类型
      * @return
      */
-    MappingType type() default MappingType.URL;
+    MappingType type() default MappingType.MENU;
 
 }

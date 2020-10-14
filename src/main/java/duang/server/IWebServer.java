@@ -6,7 +6,7 @@ public interface IWebServer {
      * 启动
      *
      */
-    void run();
+    void run(String host, Integer port);
 
     /**
      * 停止
