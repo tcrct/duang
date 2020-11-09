@@ -37,7 +37,7 @@ public class DuangException extends RuntimeException {
         return code;
     }
 
-    public String exceptionMsg() {
+    public String getExceptionMsg() {
         return exceptionMsg;
     }
 }

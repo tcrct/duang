@@ -1,5 +1,10 @@
 package duang.server;
 
+/**
+ * 容器接口
+ *
+ * @author Laotang
+ */
 public interface IWebServer {
 
     /**

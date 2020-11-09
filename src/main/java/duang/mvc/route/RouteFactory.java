@@ -1,7 +1,6 @@
 package duang.mvc.route;
 
 import cn.hutool.core.util.StrUtil;
-import com.sun.javafx.collections.MappingChange;
 import duang.mvc.common.annotation.Controller;
 import duang.mvc.common.annotation.Mapping;
 import duang.mvc.common.enums.HttpMethod;
@@ -121,9 +120,34 @@ public class RouteFactory {
         if (ToolsKit.isNotEmpty(methodParameters)) {
             for (Parameter parameter : methodParameters) {
                 paramList.add(new RequestParam(parameter.getAnnotations(), parameter.getType(), parameter.getName()));
+                /*
                 Class<?> paramType = parameter.getType();
                 String name = parameter.getName();
                 System.out.println(paramType+"              "+name+"          "+parameter);
+
+                if (paramType.isAnnotationPresent(Bean.class)) {
+                    Object bean = ReflectUtil.newInstance(paramType);
+                    try {
+                        VtorFactory.duang().validate(bean);
+                    } catch (DuangException de) {
+                        LOGGER.warn(de.getExceptionMsg());
+                    }
+                }
+
+                Annotation[] annotations = parameter.getAnnotations();
+                if (ToolsKit.isNotEmpty(annotations)) {
+//                    for (Annotation annotation : annotations) {
+                        try {
+                            Object bean = ReflectUtil.newInstance(MainController.class);
+                            Object[] parameterValues = {"3", 3};
+                            VtorFactory.duang().validateParameters(bean, method, parameterValues);
+                        } catch (DuangException de) {
+                            LOGGER.warn(de.getExceptionMsg());
+                        }
+//                        System.out.println(annotation.annotationType());
+//                    }
+                }
+                 */
             }
         }
         return paramList;
@@ -133,11 +157,17 @@ public class RouteFactory {
         if (ToolsKit.isEmpty(ROUTE_MAP)) {
             return;
         }
+
         LOGGER.warn("####### Route Mapping #######");
         for (Iterator<Map.Entry<String, Route>> iterator = ROUTE_MAP.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<String, Route> entry = iterator.next();
             LOGGER.warn(entry.getKey());
         }
+    }
+
+    public static void invoke() {
 
     }
+
+
 }

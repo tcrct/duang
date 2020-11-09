@@ -1,6 +1,12 @@
 package duang.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.serializer.SerializeFilter;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import duang.mvc.common.dto.HeadDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -9,6 +15,17 @@ import java.util.Map;
 import java.util.Set;
 
 public class ToolsKit {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(ToolsKit.class);
+
+    public static SerializerFeature[] serializerFeatureArray = {
+            SerializerFeature.QuoteFieldNames,
+            SerializerFeature.WriteNonStringKeyAsString,
+            SerializerFeature.DisableCircularReferenceDetect,
+            SerializerFeature.NotWriteRootClassName,
+            SerializerFeature.WriteDateUseDateFormat
+    };
+    private static SerializeConfig jsonConfig = new SerializeConfig();
 
     // 定义一个请求对象安全线程类
     private static DuangThreadLocal<HeadDto> requestHeaderThreadLocal = new DuangThreadLocal<HeadDto>() {
@@ -111,6 +128,10 @@ public class ToolsKit {
             tmpExcludeMethodName.addAll(excludedMethodName);
         }
         return (null == tmpExcludeMethodName) ? excludedMethodName : tmpExcludeMethodName;
+    }
+
+    public static String toJsonString(Object obj) {
+        return JSON.toJSONString(obj, jsonConfig, serializerFeatureArray);
     }
 
 }

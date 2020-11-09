@@ -1,5 +1,9 @@
 package duang.server.undertow;
 
+import duang.mvc.http.IRequest;
+import duang.mvc.http.IResponse;
+import duang.mvc.http.Request;
+import duang.mvc.http.RequestResponseFactory;
 import duang.server.IWebServer;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
@@ -42,6 +46,9 @@ public class UndertowServer implements IWebServer {
                 .setHandler(new HttpHandler() {
                     @Override
                     public void handleRequest(final HttpServerExchange exchange) throws Exception {
+                        IRequest request = new UndertowRequest(exchange);
+                        IResponse response = new UndertowResponse(request);
+                        RequestResponseFactory.create(request, response);
                         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
                         exchange.getResponseSender().send("Hello World");
                     }
