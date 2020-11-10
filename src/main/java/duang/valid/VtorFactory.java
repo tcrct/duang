@@ -2,7 +2,6 @@ package duang.valid;
 
 import duang.exception.DuangException;
 import duang.mvc.common.dto.ValidDto;
-import duang.server.DuangServer;
 import duang.utils.ToolsKit;
 
 import javax.validation.ConstraintViolation;
@@ -10,7 +9,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.executable.ExecutableValidator;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;

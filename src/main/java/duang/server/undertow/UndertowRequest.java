@@ -10,6 +10,7 @@ import duang.mvc.http.IRequest;
 import duang.utils.ToolsKit;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
+import io.undertow.util.HeaderValues;
 import io.undertow.util.HttpString;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -18,6 +19,11 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 转换Undertow请求
+ *
+ * @author Laotang
+ */
 public class UndertowRequest implements IRequest {
 
     private static final Log LOGGER = LogFactory.get(UndertowRequest.class);
@@ -129,23 +135,13 @@ public class UndertowRequest implements IRequest {
     }
 
     @Override
-    public URI uri() {
-        try {
-            return new URI(exchange.getRequestURI());
-        } catch (URISyntaxException e) {
-            LOGGER.warn(e.getMessage(), e);
-            return null;
-        }
+    public String uri() {
+        return exchange.getRequestURI();
     }
 
     @Override
-    public URL url() {
-        try {
-            return new URL(exchange.getRequestURL());
-        } catch (MalformedURLException e) {
-            LOGGER.warn(e.getMessage(), e);
-            return null;
-        }
+    public String url() {
+       return exchange.getRequestURL();
     }
 
     @Override
@@ -159,8 +155,8 @@ public class UndertowRequest implements IRequest {
         if (ToolsKit.isEmpty(map)) {
             return;
         }
-        for (Iterator<HttpString> iterator = map.getHeaderNames().iterator(); iterator.hasNext();) {
-            String key = iterator.next().toString();
+        for (Iterator<HeaderValues> iterator = map.iterator(); iterator.hasNext();) {
+            String key = iterator.next().getHeaderName().toString();
             String value = map.getFirst(key);
             if (ToolsKit.isNotEmpty(key) && ToolsKit.isNotEmpty(value)) {
                 headerMap.put(key, value);

@@ -1,7 +1,8 @@
 package duang.mvc.http;
 
 import cn.hutool.http.ContentType;
-import cn.hutool.http.HttpStatus;
+
+import java.util.Map;
 
 public interface IResponse {
     /**请求ID*/
@@ -10,6 +11,8 @@ public interface IResponse {
     String body();
     /**设置响应内容*/
     void body(String content);
+    /**取响应头*/
+    Map<String,String> header();
     /**设置响应头*/
     void header(String key, String value);
     /**重定向*/
@@ -17,7 +20,7 @@ public interface IResponse {
     /**响应状态*/
     Integer status();
     /**设置响应状态*/
-    void status(HttpStatus status);
+    void status(Integer status);
     /**内容主体的类型*/
     ContentType type();
     /**设置内容主体的类型*/

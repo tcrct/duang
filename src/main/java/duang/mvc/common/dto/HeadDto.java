@@ -86,4 +86,17 @@ public class HeadDto implements java.io.Serializable {
     public long getStartTime() {
         return startTime;
     }
+
+    @Override
+    public String toString() {
+        return "HeadDto{" +
+                "code=" + code +
+                ", msg=" + msg +
+                ", requestId='" + requestId + '\'' +
+                ", uri='" + uri + '\'' +
+                ", requestTime='" + requestTime + '\'' +
+                ", processTime=" + processTime +
+                ", startTime=" + startTime +
+                '}';
+    }
 }

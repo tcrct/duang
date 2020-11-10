@@ -36,6 +36,15 @@ public class RouteFactory {
     public static Route getRoute(String routeKey) {
         return ROUTE_MAP.get(routeKey);
     }
+
+    /**
+     * 根据是否存在映射
+     * @param routeKey
+     * @return
+     */
+    public static boolean containsKey(String routeKey) {
+        return ROUTE_MAP.containsKey(routeKey);
+    }
     /**
      * 添加路由到Map集合
      */
@@ -86,7 +95,7 @@ public class RouteFactory {
             desc = ToolsKit.isNotEmpty(controllerMapping.desc()) ? controllerMapping.desc() : desc;
             mappingType =  ToolsKit.isNotEmpty(controllerMapping.type()) ? controllerMapping.type() : mappingType;
         }
-        value = StrUtil.addPrefixIfNot(value, "/");
+        value = value.startsWith("/") ? value : "/"+value;
         return new RequestMapping(value.toLowerCase(), desc, HttpMethod.ALL, mappingType);
     }
 
@@ -102,7 +111,7 @@ public class RouteFactory {
             httpMethod = ToolsKit.isNotEmpty(methodMapping.method()) ? methodMapping.method() : httpMethod;
             mappingType = ToolsKit.isNotEmpty(methodMapping.type()) ? methodMapping.type() : mappingType;
         }
-        value = StrUtil.addPrefixIfNot(value, "/");
+        value = value.startsWith("/") ? value : "/"+value;
         return new RequestMapping(controllerRequestMappingStr + value, desc, httpMethod, mappingType);
     }
 

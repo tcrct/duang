@@ -51,9 +51,9 @@ public interface IRequest {
     String scheme();
     String servletPath();
     /**请求URI*/
-    URI uri() throws URISyntaxException;
+    String uri();
     /**请求URL*/
-    URL url() throws MalformedURLException;
+    String url();
     /**请求User Agent*/
     UserAgent userAgent();
 }

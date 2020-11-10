@@ -1,5 +1,6 @@
 package duang.mvc.handler;
 
+import duang.exception.DuangException;
 import duang.mvc.http.IRequest;
 import duang.mvc.http.IResponse;
 
@@ -11,6 +12,6 @@ import duang.mvc.http.IResponse;
  */
 public interface IHandler {
 
-    boolean handler(IRequest request, IResponse response);
+    void handler(IRequest request, IResponse response) throws DuangException;
 
 }

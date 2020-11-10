@@ -42,7 +42,7 @@ public class BeanFactory {
     /**
      * 初始化实例
      */
-    public static void newInstance() {
+    static void newInstance() {
         Map<Class<?>, Set<Class<?>>> classSetMap =  ScanFactory.getScanClassMap();
         if (ToolsKit.isEmpty(classSetMap)) {
             LOGGER.warn("ScanFactory没有扫描到任何需要实例化的类");

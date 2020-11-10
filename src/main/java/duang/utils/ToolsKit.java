@@ -43,6 +43,20 @@ public class ToolsKit {
         requestHeaderThreadLocal.set(headDto);
     }
 
+    /**
+     * 取出HeadDto
+     * @return
+     */
+    public static HeadDto getThreadLocalDto() {
+        return requestHeaderThreadLocal.get();
+    }
+
+    /***
+     * 移除HeadDto
+     */
+    public static void removeThreadLocalDto() {
+        requestHeaderThreadLocal.remove();
+    }
     /***
      * 判断传入的对象是否为空
      *

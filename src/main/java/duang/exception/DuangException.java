@@ -1,5 +1,7 @@
 package duang.exception;
 
+import cn.hutool.http.HttpStatus;
+
 /**
  * 框架异常
  *
@@ -10,27 +12,23 @@ public class DuangException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private int code = 500;
-    private String exceptionMsg;
+    private int code = HttpStatus.HTTP_INTERNAL_ERROR;
 
     public DuangException() {
         super(null, null, false, false);
     }
 
     public DuangException(int code) {
-        this();
         this.code = code;
     }
 
     public DuangException(String exceptionMsg) {
-        this();
-        this.exceptionMsg = exceptionMsg;
+        super(exceptionMsg);
     }
 
-    public DuangException(int code, String exceptionMsg) {
-        this();
+    public DuangException(int code, String exceptionMsg, Exception exception) {
+        super(exceptionMsg, exception);
         this.code = code;
-        this.exceptionMsg = exceptionMsg;
     }
 
      public int code() {
@@ -38,6 +36,6 @@ public class DuangException extends RuntimeException {
     }
 
     public String getExceptionMsg() {
-        return exceptionMsg;
+        return super.getMessage();
     }
 }

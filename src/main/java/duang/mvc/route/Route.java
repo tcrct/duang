@@ -1,5 +1,7 @@
 package duang.mvc.route;
 import com.alibaba.fastjson.annotation.JSONField;
+import duang.mvc.common.annotation.Controller;
+
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -33,6 +35,11 @@ public class Route implements java.io.Serializable {
      */
     private Class<?> returnClass;
 
+    /**
+     * 是否单例
+     */
+    private boolean isSingleton;
+
     public Route() {
     }
 
@@ -42,6 +49,8 @@ public class Route implements java.io.Serializable {
         this.method = method;
         this.requestParamList = requestParamList;
         this.returnClass = returnClass;
+        // 是否单例
+        setSingleton(controllerClass.getAnnotation(Controller.class).scope().equalsIgnoreCase("singleton"));
     }
 
     public RequestMapping getRequestMapping() {
@@ -82,5 +91,13 @@ public class Route implements java.io.Serializable {
 
     public void setReturnClass(Class<?> returnClass) {
         this.returnClass = returnClass;
+    }
+
+    private void setSingleton(boolean singleton) {
+        isSingleton = singleton;
+    }
+
+    public boolean isSingleton() {
+        return isSingleton;
     }
 }
