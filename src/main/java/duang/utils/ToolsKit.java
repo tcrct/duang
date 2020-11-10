@@ -9,10 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ToolsKit {
 
@@ -146,6 +143,14 @@ public class ToolsKit {
 
     public static String toJsonString(Object obj) {
         return JSON.toJSONString(obj, jsonConfig, serializerFeatureArray);
+    }
+
+    public static <T> T jsonParseObject(String jsonText, Class<T> clazz) {
+        return JSON.parseObject(jsonText, clazz);
+    }
+
+    public static <T> List<T> jsonParseArray(String jsonText, Class<T> clazz) {
+        return JSON.parseArray(jsonText, clazz);
     }
 
 }

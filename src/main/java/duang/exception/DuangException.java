@@ -26,6 +26,10 @@ public class DuangException extends RuntimeException {
         super(exceptionMsg);
     }
 
+    public DuangException(String exceptionMsg, Exception exception) {
+        super(exceptionMsg, exception);
+    }
+
     public DuangException(int code, String exceptionMsg, Exception exception) {
         super(exceptionMsg, exception);
         this.code = code;

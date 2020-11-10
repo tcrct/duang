@@ -1,10 +1,18 @@
 package duang.mvc.common.core;
 
+import cn.hutool.core.util.StrUtil;
+import duang.exception.DuangException;
+import duang.mvc.route.RequestParam;
 import duang.mvc.route.Route;
+import duang.utils.DataType;
 import duang.utils.ToolsKit;
+import duang.utils.TypeConverter;
+import duang.valid.VtorFactory;
 
 
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.util.List;
 
 public class ActionInvocation {
 
@@ -63,22 +71,66 @@ public class ActionInvocation {
         if (inters != null && index < inters.length) {
             inters[index++].intercept(this);
         } else {
-//			System.out.println("method.getReturnType(): " + method.getReturnType());
             //如果方法体里有参数设置并且返回值不是void
             if (ToolsKit.isNotEmpty(method.getParameters())) {
-                // 先通过asm取出方法体里的参数名
-                String[] parameterNames = MethodParameterNameDiscoverer.getParameterNames(controller.getClass(), method);
-                if(ToolsKit.isEmpty(parameterNames)) {
-                    throw new MvcException("parameter name array is null");
-                }
-                // 再根据参数名取出request里的value，然后再根据验证注解验证，通过后再注入到方法体内
-                Object[] argsObj =ParameterInvokeMethod.getParameterValues(controller, method, parameterNames);
-                returnObj = method.invoke(controller, argsObj);
+                returnObj = method.invoke(controller, getParameterValues());
             } else {
                 returnObj = method.invoke(controller, NULL_ARGS);
             }
         }
         return returnObj;
+    }
+
+    private Object[] getParameterValues() {
+        List<RequestParam> paramList = route.getRequestParamList();
+        if (ToolsKit.isEmpty(paramList)) {
+            return NULL_ARGS;
+        }
+        int size = paramList.size();
+        Object[] requestParamValueObj = new Object[size];
+        boolean isBeanParam = false;
+        try {
+            for (int i=0; i<size; i++) {
+                RequestParam param  = paramList.get(i);
+                String name = param.getName();
+                if (ToolsKit.isEmpty(name)) {
+                    continue;
+                }
+                Class<?> paramClass = param.getParamClass();
+                if (DataType.isBaseType(paramClass)) {
+                    String paramValue = controller.getRequest().params(name);
+                    if (ToolsKit.isEmpty(paramValue)) {
+                        continue;
+                    }
+                    requestParamValueObj[i] = TypeConverter.convert(param.getParamClass(), paramValue);
+                } else if (DataType.isBeanType(paramClass)){
+                     Object bean = convertBean(paramClass);
+                    VtorFactory.duang().validate(bean);
+                    requestParamValueObj[i] = bean;
+                    isBeanParam = true;
+                }
+            }
+            if (!isBeanParam) {
+                VtorFactory.duang().validateParameters(controller, method, requestParamValueObj);
+            }
+            return requestParamValueObj;
+        } catch (Exception e) {
+            throw new DuangException(e.getMessage(), e);
+        }
+    }
+
+    private Object convertBean(Class<?> paramClass) {
+        String body = controller.getRequest().body();
+        Object beanObj = null;
+        if (ToolsKit.isNotEmpty(body)) {
+            if (body.startsWith("{") && body.endsWith("}")) {
+                beanObj = ToolsKit.jsonParseObject(body, paramClass);
+            }
+            else if (body.startsWith("[{") && body.endsWith("}]")) {
+                beanObj = ToolsKit.jsonParseArray(body, List.class);
+            }
+        }
+        return beanObj;
     }
 
 }
