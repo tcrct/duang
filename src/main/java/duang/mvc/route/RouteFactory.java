@@ -23,11 +23,15 @@ import java.util.*;
  * @author Laotang
  * @since 1.0
  */
-public class RouteFactory {
+final public class RouteFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RouteFactory.class);
     private static final TreeMap<String, Route> ROUTE_MAP = new TreeMap();
 
+    static {
+        initRoute();
+        LOGGER.info("initRoute");
+    }
     /**
      * 根据映射路由key取出路由对象
      * @param routeKey 映射路由key
@@ -48,7 +52,7 @@ public class RouteFactory {
     /**
      * 添加路由到Map集合
      */
-    public static void initRoute() {
+    private static void initRoute() {
         Set<Class<?>> controllerClassSet = ScanFactory.getClassListByAnnotation(Controller.class);
         if (ToolsKit.isEmpty(controllerClassSet)) {
             LOGGER.warn("没有发现Controller类");

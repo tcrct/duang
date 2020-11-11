@@ -8,19 +8,23 @@ import duang.utils.ScanFactory;
 public class DuangServer {
 
     private String host = "0.0.0.0";
-    private Integer port = 5050;
+    private Integer port = 8080;
     private IWebServer server;
 
     private static class SingletonHolder {
         private static final DuangServer INSTANCE = new DuangServer();
     }
     private DuangServer() {
+
+        StartContextListener.duang().start();
+
         // 扫描类
-        ScanFactory.scan();
+//        ScanFactory.scan();
         // 初始化插件
-        PluginFactory.initPlugin();
+//        PluginFactory.initPlugin();
         // 初始化路由
-        RouteFactory.initRoute();
+//        RouteFactory.initRoute();
+        //
     }
     public static DuangServer duang() {
         return SingletonHolder.INSTANCE;

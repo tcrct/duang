@@ -8,6 +8,7 @@ import duang.server.IWebServer;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.BlockingHandler;
 import io.undertow.util.HttpString;
 
 import java.util.Iterator;
@@ -46,12 +47,13 @@ public class UndertowServer implements IWebServer {
     private void start() {
         Undertow server = Undertow.builder()
                 .addHttpListener(getPort(), getHost())
-                .setHandler(new HttpHandler() {
+                //BlockingHandler 要包多一层，若不然，post json取不到
+                .setHandler(new BlockingHandler(new HttpHandler() {
                     @Override
                     public void handleRequest(final HttpServerExchange exchange) throws Exception {
                         IRequest request = new UndertowRequest(exchange);
                         IResponse response = new UndertowResponse(request, exchange);
-                        RequestResponseFactory.create(request, response);
+//                        RequestResponseFactory.create(request, response);
                         HandlerFactory.handler(request, response);
                         for (Iterator<Map.Entry<String,String>> iterator = response.header().entrySet().iterator(); iterator.hasNext();) {
                             Map.Entry<String,String> entry = iterator.next();
@@ -59,7 +61,7 @@ public class UndertowServer implements IWebServer {
                         }
                         exchange.getResponseSender().send(response.body());
                     }
-                }).build();
+                })).build();
         server.start();
     }
 }

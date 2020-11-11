@@ -8,6 +8,7 @@ import duang.mvc.common.annotation.Handler;
 import duang.mvc.http.IRequest;
 import duang.mvc.http.IResponse;
 import duang.mvc.route.RouteFactory;
+import duang.spi.ResponseBodyAdvice;
 import duang.utils.ScanFactory;
 import duang.utils.ToolsKit;
 import org.slf4j.Logger;
@@ -50,9 +51,9 @@ public class HandlerFactory {
             //调用Controller->Service->Dao
             ActionHandler.doHandler(request, response);
         } catch (Exception e) {
-            if (ToolsKit.isNotEmpty(response.status()) && HttpStatus.HTTP_OK != response.status()) {
+            if (ToolsKit.isNotEmpty(response.status()) && HttpStatus.HTTP_OK == response.status()) {
                 response.status(HttpStatus.HTTP_INTERNAL_ERROR);
-                response.body(e.getMessage());
+                response.body(ResponseBodyAdvice.duang().write(e));
             }
             LOGGER.warn("[{}]-请求[{}][{}]时出错: {}", DateUtil.formatDateTime(new Date()), request.uri(), request.requestId(), e.getMessage(), e);
         } finally {

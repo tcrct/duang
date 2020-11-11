@@ -1,5 +1,7 @@
 package duang.mvc.common.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * 返回结果头部信息内容
  *
@@ -21,6 +23,7 @@ public class HeadDto implements java.io.Serializable {
     /**处理时间(毫秒)*/
     private long processTime;
     /**开始时间*/
+    @JSONField(deserialize = false, serialize = false)
     private long startTime = System.currentTimeMillis();
 
     public HeadDto() {

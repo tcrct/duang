@@ -4,6 +4,8 @@ import cn.hutool.core.util.ClassUtil;
 import duang.exception.DuangException;
 import duang.mvc.common.enums.ScanAnnotation;
 import duang.mvc.common.enums.SettingKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -14,11 +16,18 @@ import java.util.*;
  * @author Laotang
  * @since 1.0
  */
-public class ScanFactory {
+final public class ScanFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScanFactory.class);
 
     private static final Map<Class<?>, Set<Class<?>>> CLASS_MAP = new HashMap<>();
 
-    public static void scan() {
+    static {
+        initScan();
+        LOGGER.info("initScan");
+    }
+
+    private static void initScan() {
         String packagePath = SettingKit.duang().get(SettingKey.SCAN_PACKAGE_PATH.getKey());
         if (ToolsKit.isEmpty(packagePath)) {
             throw new DuangException(String.format("请在[%s]]文件设置[%s]值，指定需要扫描的包路径", SettingKit.SETTING_FILE_NANE, SettingKey.SCAN_PACKAGE_PATH.getKey()));
@@ -30,7 +39,7 @@ public class ScanFactory {
      *
      * @param packagePath 项目路径前缀
      */
-    public static void scanPackage(String packagePath) {
+    private static void scanPackage(String packagePath) {
         if (ToolsKit.isEmpty(packagePath)) {
             throw new DuangException("项目包路径前缀不能为空");
         }

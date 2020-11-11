@@ -19,16 +19,20 @@ import java.util.jar.Manifest;
  * @author Laotang
  * @since 1.0
  */
-public class BeanFactory {
+final public class BeanFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeanFactory.class);
-
     /**
      * Bean Map
      * key为需要扫描的注解类class，value为标记了该注解的类对象Map集合，该Map的key为类，value为类的实例化对象
      * 注意：存在该Map下的对象为单例对象
      * */
     private static final Map<Class, Object> BEAN_MAP = new HashMap<>();
+
+    static {
+        initBean();
+        LOGGER.info("initBean");
+    }
 
     public static <T> T getBean(Class<?> clazz) {
         Object object = BEAN_MAP.get(clazz);
@@ -42,7 +46,7 @@ public class BeanFactory {
     /**
      * 初始化实例
      */
-    static void newInstance() {
+    private static void initBean() {
         Map<Class<?>, Set<Class<?>>> classSetMap =  ScanFactory.getScanClassMap();
         if (ToolsKit.isEmpty(classSetMap)) {
             LOGGER.warn("ScanFactory没有扫描到任何需要实例化的类");

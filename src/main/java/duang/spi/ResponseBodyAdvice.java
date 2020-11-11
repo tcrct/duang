@@ -1,7 +1,10 @@
 package duang.spi;
 
+import cn.hutool.core.util.IdUtil;
+import duang.exception.DuangException;
 import duang.mvc.common.dto.HeadDto;
 import duang.mvc.common.dto.ReturnDto;
+import duang.utils.DuangId;
 import duang.utils.ToolsKit;
 
 /**
@@ -24,7 +27,15 @@ public class ResponseBodyAdvice {
             return ToolsKit.toJsonString(resultObj);
         }
         HeadDto headDto = ToolsKit.getThreadLocalDto();
-        ReturnDto returnDto = new ReturnDto(headDto, resultObj);
+        if (resultObj instanceof DuangException) {
+            DuangException duangException = (DuangException)resultObj;
+            resultObj = duangException.getExceptionObj();
+            headDto.setCode(1);
+            headDto.setMsg("参数验证失败");
+        }
+        headDto.setProcessTime(System.currentTimeMillis() - headDto.getStartTime());
+        ReturnDto<String> returnDto = new ReturnDto(headDto, resultObj);
+
         ToolsKit.removeThreadLocalDto();
         return ToolsKit.toJsonString(returnDto);
     }

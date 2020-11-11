@@ -81,7 +81,7 @@ public class ActionInvocation {
         return returnObj;
     }
 
-    private Object[] getParameterValues() {
+    private Object[] getParameterValues() throws DuangException, ParseException {
         List<RequestParam> paramList = route.getRequestParamList();
         if (ToolsKit.isEmpty(paramList)) {
             return NULL_ARGS;
@@ -89,34 +89,34 @@ public class ActionInvocation {
         int size = paramList.size();
         Object[] requestParamValueObj = new Object[size];
         boolean isBeanParam = false;
-        try {
-            for (int i=0; i<size; i++) {
-                RequestParam param  = paramList.get(i);
-                String name = param.getName();
-                if (ToolsKit.isEmpty(name)) {
+
+        for (int i=0; i<size; i++) {
+            RequestParam param  = paramList.get(i);
+            String name = param.getName();
+            if (ToolsKit.isEmpty(name)) {
+                continue;
+            }
+            Class<?> paramClass = param.getParamClass();
+            if (DataType.isBaseType(paramClass)) {
+                String paramValue = controller.getRequest().params(name);
+                if (ToolsKit.isEmpty(paramValue)) {
                     continue;
                 }
-                Class<?> paramClass = param.getParamClass();
-                if (DataType.isBaseType(paramClass)) {
-                    String paramValue = controller.getRequest().params(name);
-                    if (ToolsKit.isEmpty(paramValue)) {
-                        continue;
-                    }
-                    requestParamValueObj[i] = TypeConverter.convert(param.getParamClass(), paramValue);
-                } else if (DataType.isBeanType(paramClass)){
-                     Object bean = convertBean(paramClass);
-                    VtorFactory.duang().validate(bean);
-                    requestParamValueObj[i] = bean;
-                    isBeanParam = true;
-                }
+                requestParamValueObj[i] = TypeConverter.convert(param.getParamClass(), paramValue);
+            } else if (DataType.isBeanType(paramClass)){
+                 Object bean = convertBean(paramClass);
+                 if (ToolsKit.isEmpty(bean)) {
+                     throw new DuangException("提交参数为Json数据时，转换为Dto时出错");
+                 }
+                VtorFactory.duang().validate(bean);
+                requestParamValueObj[i] = bean;
+                isBeanParam = true;
             }
-            if (!isBeanParam) {
-                VtorFactory.duang().validateParameters(controller, method, requestParamValueObj);
-            }
-            return requestParamValueObj;
-        } catch (Exception e) {
-            throw new DuangException(e.getMessage(), e);
         }
+        if (!isBeanParam) {
+            VtorFactory.duang().validateParameters(controller, method, requestParamValueObj);
+        }
+        return requestParamValueObj;
     }
 
     private Object convertBean(Class<?> paramClass) {

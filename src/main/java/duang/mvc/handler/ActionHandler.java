@@ -51,7 +51,7 @@ final public class ActionHandler {
         ActionInvocation invocation = new ActionInvocation(route, controller, method, target);
         Object resultObj = invocation.invoke();
         if (ToolsKit.isEmpty(resultObj)) {
-            throw new DuangException(String.format("该请求[%s]的响应不能为null", target));
+            throw new DuangException(String.format("该请求[%s]的响应值不能为null", target));
         }
         // 将所有返回的数据类型则封装成ReturnDto返回
         response.body(ResponseBodyAdvice.duang().write(resultObj));

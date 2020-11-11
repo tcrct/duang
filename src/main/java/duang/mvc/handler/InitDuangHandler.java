@@ -20,9 +20,9 @@ public class InitDuangHandler implements IHandler {
     public void handler(IRequest request, IResponse response) throws DuangException {
         // 初始化返回对象头部信息
         HeadDto headDto = new HeadDto();
-        headDto.setRequestId(IdUtil.objectId());
+        headDto.setRequestId(request.requestId());
         headDto.setRequestTime(DateUtil.now());
-        headDto.setUri(request.requestId());
+        headDto.setUri(request.uri());
         ToolsKit.setThreadLocalDto(headDto);
     }
 

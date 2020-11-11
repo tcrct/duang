@@ -4,6 +4,7 @@ import cn.hutool.http.useragent.UserAgent;
 import duang.mvc.common.enums.HttpMethod;
 import duang.utils.DuangId;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,7 +21,7 @@ public interface IRequest {
     /**请求主体内容，String格式*/
     String body();                   // request body sent by the client
     /**请求主体内容，Byte数组格式*/
-    Byte[] bodyAsBytes();            // request body as bytes
+    byte[] bodyAsBytes();            // request body as bytes
     /**请求主体内容长度*/
     Long contentLength();          // length of request body
     /**请求主体内容类型*/
@@ -56,4 +57,6 @@ public interface IRequest {
     String url();
     /**请求User Agent*/
     UserAgent userAgent();
+    /**取提交的文件*/
+    void getFile() throws IOException;
 }

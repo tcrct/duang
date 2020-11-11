@@ -3,6 +3,8 @@ package duang.valid;
 import duang.exception.DuangException;
 import duang.mvc.common.dto.ValidDto;
 import duang.utils.ToolsKit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -48,7 +50,7 @@ public class VtorFactory {
     public <T> T validate(T bean) throws DuangException {
         List<ValidDto> validDtoList = validateBeanOrParams(validator.validate(bean));
         if (ToolsKit.isNotEmpty(validDtoList)) {
-            throw new DuangException(ToolsKit.toJsonString(validDtoList));
+            throw new DuangException(ToolsKit.toJsonString(validDtoList), validDtoList);
         }
         return (T)bean;
     }
@@ -56,7 +58,7 @@ public class VtorFactory {
     public <T> T validateParameters(T object, Method method, Object[] parameterValues, Class<?>... groups) {
         List<ValidDto> validDtoList = validateBeanOrParams(executableValidator.validateParameters(object, method, parameterValues, groups));
         if (ToolsKit.isNotEmpty(validDtoList)) {
-            throw new DuangException(ToolsKit.toJsonString(validDtoList));
+            throw new DuangException(ToolsKit.toJsonString(validDtoList), validDtoList);
         }
         return object;
     }
@@ -68,7 +70,12 @@ public class VtorFactory {
         List<ValidDto> validDtoList = new ArrayList<>(constraintViolations.size());
         for (Object violationObj : constraintViolations) {
             ConstraintViolation violation = (ConstraintViolation)violationObj;
-            validDtoList.add(new ValidDto(violation.getPropertyPath().toString(), violation.getMessage()));
+            String fieldName = violation.getPropertyPath().toString();
+            int startIndex = fieldName.indexOf(".");
+            if (startIndex > -1) {
+                fieldName = fieldName.substring(startIndex+1);
+            }
+            validDtoList.add(new ValidDto(fieldName, violation.getMessage()));
         }
         return validDtoList;
     }

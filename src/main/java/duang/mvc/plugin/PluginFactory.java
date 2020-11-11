@@ -18,9 +18,14 @@ import java.util.TreeMap;
  * @author Laotang
  * @since 1.0
  */
-public class PluginFactory {
+final public class PluginFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginFactory.class);
+
+    static {
+        initPlugin();
+        LOGGER.info("initPlugin");
+    }
 
     /**
      * 系统启动前的播件集合
@@ -31,7 +36,7 @@ public class PluginFactory {
      */
     private static List<IPlugin> PLUGIN_AFTER_LIST = new ArrayList<>();
 
-    public static void initPlugin() {
+    private static void initPlugin() {
         if (ToolsKit.isEmpty(PLUGIN_BEFORE_LIST) && ToolsKit.isEmpty(PLUGIN_AFTER_LIST)) {
             initPlugins();
         }
@@ -82,6 +87,8 @@ public class PluginFactory {
             if(!afterPluginMap.isEmpty()) {
                 PLUGIN_AFTER_LIST.addAll(beforePluginMap.values());
             }
+            // 启动插件
+
         } catch (Exception e) {
             LOGGER.warn("初始化插件时出错时出错: {}，清空PLUGIN_LIST集合后退出", e.getMessage(), e);
             PLUGIN_BEFORE_LIST.clear();
