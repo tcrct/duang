@@ -20,6 +20,7 @@
         <fastjson.version>1.2.73</fastjson.version>
         <undertow.version>2.1.0.Final</undertow.version>
         <validator.version>6.1.6.Final</validator.version>
+        <logback.version>1.2.3</logback.version>
     </properties>
 
     <dependencies>
@@ -29,10 +30,15 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.slf4j</groupId>-->
+<!--            <artifactId>slf4j-simple</artifactId>-->
+<!--            <version>${slf4j.version}</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
         <!-- fastjson -->
         <dependency>

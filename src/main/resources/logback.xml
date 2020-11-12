@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="logDirPattern" value="E:\\logs" />
+	<property name="logFileNamePattern" value="${logDirPattern}/%d{yyyyMM}/%d{dd}" />
+	<define name="requestId" class="duang.spi.RequestIdDefiner"/>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} %L - [${requestId}] : %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<Key>request.uri</Key>
+			<DefaultValue>system</DefaultValue>
+		</discriminator>
+		<sift>
+			<appender name="FILE-${request.uri}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<FileNamePattern>
+						${logFileNamePattern}/${request.uri}.log
+					</FileNamePattern>
+				</rollingPolicy>
+				<layout class="ch.qos.logback.classic.PatternLayout">
+					<Pattern>
+						%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} %L - [%d{requestId}] : %msg%n
+					</Pattern>
+				</layout>
+				<encoder>
+					<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} %L - [%d{requestId}] : %msg%n</pattern>
+					<charset class="java.nio.charset.Charset">UTF-8</charset>
+				</encoder>
+			</appender>
+		</sift>
+	</appender>
+
+<!--	<appender name="SIFT2" class="ch.qos.logback.classic.sift.SiftingAppender">-->
+<!--		<discriminator>-->
+<!--			<Key>JOB.ID</Key>-->
+<!--			<DefaultValue>system</DefaultValue>-->
+<!--		</discriminator>-->
+<!--		<sift>-->
+<!--			<appender name="FILE-${JOB.ID}" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--					<FileNamePattern>-->
+<!--						${logFileNamePattern}/${JOB.ID}.log-->
+<!--					</FileNamePattern>-->
+<!--				</rollingPolicy>-->
+<!--				<layout class="ch.qos.logback.classic.PatternLayout">-->
+<!--					<Pattern>-->
+<!--						%d{yyyyMMdd:HH:mm:ss.SSS} [%thread] %-5level %logger{80} %L %msg%n-->
+<!--					</Pattern>-->
+<!--				</layout>-->
+<!--				<encoder>-->
+<!--					<pattern>%d{yyyyMMdd:HH:mm:ss.SSS} [%thread] %-5level %logger{80} %L %msg%n</pattern>-->
+<!--					<charset class="java.nio.charset.Charset">UTF-8</charset>-->
+<!--				</encoder>-->
+<!--			</appender>-->
+<!--		</sift>-->
+<!--	</appender>-->
+
+<!--	<logger name="dao" level="DEBUG"/>-->
+<!--	<logger name="com.thinkgem.jeesite.common.persistence.interceptor.PaginationInterceptor" level="DEBUG"/>-->
+<!--	<logger name="com.thinkgem.jeesite.common.push.job.MsgPushJob" level="INFO" />-->
+
+
+	<root level="INFO">
+		<appender-ref ref="SIFT" />
+<!--		<appender-ref ref="SIFT2" />-->
+	 	<appender-ref ref="CONSOLE" />
+<!--		<appender-ref ref="fileInfoLog"/>-->
+	</root>
+
+</configuration>

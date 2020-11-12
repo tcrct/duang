@@ -222,6 +222,9 @@ public class UndertowRequest extends AbstractRequest {
     }
 
     private void createRequestParamMap1(FormDataParser parser) {
+        if (ToolsKit.isEmpty(parser)) {
+            return;
+        }
         parser.setCharacterEncoding(Charset.defaultCharset().toString());
         try {
             FormData formData = parser.parseBlocking();
