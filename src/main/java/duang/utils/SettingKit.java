@@ -36,7 +36,9 @@ public class SettingKit {
     public String get(String key) {
         String value = SETTING.get(key);
         if (ToolsKit.isEmpty(value)) {
-            LOGGER.warn("根据[{}]查询配置内容时，内容值为空，请检查！", key);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("根据[{}]查询配置内容时，内容值为空，请检查！", key);
+            }
         }
         return value;
     }

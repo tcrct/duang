@@ -6,12 +6,10 @@ import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import duang.Duang;
 import duang.exception.DuangException;
 import duang.mvc.common.dto.UploadFileDto;
 import duang.mvc.common.enums.HttpMethod;
 import duang.server.abstracts.AbstractRequest;
-import duang.spi.IAdvice;
 import duang.utils.DuangId;
 import duang.utils.ToolsKit;
 import io.undertow.server.HttpServerExchange;
@@ -22,7 +20,6 @@ import io.undertow.util.HeaderMap;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -158,39 +155,32 @@ public class UndertowRequest extends AbstractRequest {
     }
 
     @Override
-    public List<UploadFileDto> getUploadFiles(String serverDirectory) throws DuangException, IOException {
+    public List<UploadFileDto> getUploadFiles(String serverDirectory) throws Exception {
+        List<UploadFileDto> uploadFileDtoList = new ArrayList<>();
         FormDataParser parser = FormParserFactory.builder().build().createParser(exchange);
         // 防止乱码
         parser.setCharacterEncoding(Charset.defaultCharset().toString());
         FormData formData = parser.parseBlocking();
 //        Charset characterEncoding = getCharacterEncoding();
-        List<UploadFileDto> uploadFileDtoList = new ArrayList<>();
-        try {
-            for (String name : formData) {
-                Deque<FormData.FormValue> formValues = formData.get(name);
-                // 判断formValue是不是文件
-                if (formValues.getFirst().isFileItem()) {
-                    FormData.FormValue formValue = formValues.getFirst();
-                    FormData.FileItem fileItem = formValue.getFileItem();
-                    String parameterName = "未知";
-                    String oiriginalName = formValue.getFileName();
-                    String fileName = DuangId.get().toString() + "." + oiriginalName.substring(oiriginalName.lastIndexOf(".") + 1);
-                    String contentType = headerMap.get(Headers.CONTENT_TYPE);
-                    long fileSize = fileItem.getFileSize();
-                    UploadFileDto uploadFileDto = new UploadFileDto(parameterName, serverDirectory, fileName, oiriginalName, name, contentType, fileSize);
-                    isAllowUpload(uploadFileDto);
-                    // 获取文件名，这种方式获取的是原文件名，带后缀的
-                    // 还可以从formValues.getFirst().getFileItem().getFile().getFileName()里获取文件名，不过这个文件名已经被重新命名了，而且还不带后缀
-                    // 创建一个输出流，将文件保存到本地
-                    FileOutputStream fos = new FileOutputStream(uploadFileDto.getFile());
-                    // 保存文件
-                    Files.copy(fileItem.getFile(), fos);
-                    fos.close();
-                    uploadFileDtoList.add(uploadFileDto);
-                }
+        for (String name : formData) {
+            Deque<FormData.FormValue> formValues = formData.get(name);
+            // 判断formValue是不是文件
+            if (formValues.getFirst().isFileItem()) {
+                FormData.FormValue formValue = formValues.getFirst();
+                FormData.FileItem fileItem = formValue.getFileItem();
+                String parameterName = "未知";
+                String oiriginalName = formValue.getFileName();
+                String fileName = DuangId.get().toString() + "." + oiriginalName.substring(oiriginalName.lastIndexOf(".") + 1);
+                String contentType = headerMap.get(Headers.CONTENT_TYPE);
+                long fileSize = fileItem.getFileSize();
+                UploadFileDto uploadFileDto = new UploadFileDto(parameterName, serverDirectory, fileName, oiriginalName, name, contentType, fileSize);
+                // 保存到指定位置
+                uploadFileToSave(fileItem.getFile().toFile(), uploadFileDto);
+                // 获取文件名，这种方式获取的是原文件名，带后缀的
+                // 还可以从formValues.getFirst().getFileItem().getFile().getFileName()里获取文件名，不过这个文件名已经被重新命名了，而且还不带后缀
+                // 创建一个输出流，将文件保存到本地
+                uploadFileDtoList.add(uploadFileDto);
             }
-        } catch (DuangException e) {
-            throw new DuangException("文件不允许上传，请检查实现了IAdvice接口类的handler方法。异常信息：" + e.getMessage());
         }
         return uploadFileDtoList;
     }

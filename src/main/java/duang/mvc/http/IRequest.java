@@ -61,5 +61,5 @@ public interface IRequest {
     /**请求User Agent*/
     UserAgent userAgent();
     /**取提交的文件*/
-    List<UploadFileDto> getUploadFiles(String dirPath)  throws IOException;
+    List<UploadFileDto> getUploadFiles(String dirPath) throws Exception;
 }

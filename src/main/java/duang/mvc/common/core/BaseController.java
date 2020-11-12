@@ -1,7 +1,11 @@
 package duang.mvc.common.core;
 
+import duang.exception.DuangException;
+import duang.mvc.common.dto.UploadFileDto;
 import duang.mvc.http.IRequest;
 import duang.mvc.http.IResponse;
+
+import java.util.List;
 
 public abstract class BaseController {
 
@@ -9,11 +13,11 @@ public abstract class BaseController {
     private IResponse response;
 //    private Render render;
 
-    public IRequest getRequest() {
+    protected IRequest getRequest() {
         return request;
     }
 
-    public IResponse getResponse() {
+    protected IResponse getResponse() {
         return response;
     }
 
@@ -25,6 +29,11 @@ public abstract class BaseController {
 //        if("dev".equalsIgnoreCase(PropKit.get(ConstEnums.PROPERTIES.USE_ENV.getValue()))) {
 //            printRequestInfo();
 //        }
+    }
+
+    protected List<UploadFileDto> getUploadFiles() throws Exception{
+        String dirPath = "E:\\app";
+        return getRequest().getUploadFiles(dirPath);
     }
 
 }

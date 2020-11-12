@@ -31,7 +31,7 @@ public class MainController extends BaseController {
         try {
             System.out.println(getRequest().params("name"));
             System.out.println(getRequest().params("size"));
-            getRequest().getUploadFiles("E:\\app\\");
+            getUploadFiles();
             return IdUtil.objectId();
         }catch (Exception e) {
             e.printStackTrace();
