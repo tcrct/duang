@@ -1,7 +1,9 @@
 package duang.mvc.http;
 
 import cn.hutool.http.useragent.UserAgent;
+import duang.mvc.common.dto.UploadFileDto;
 import duang.mvc.common.enums.HttpMethod;
+import duang.spi.IAdvice;
 import duang.utils.DuangId;
 
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 public interface IRequest {
@@ -58,5 +61,5 @@ public interface IRequest {
     /**请求User Agent*/
     UserAgent userAgent();
     /**取提交的文件*/
-    void getFile() throws IOException;
+    List<UploadFileDto> getUploadFiles(String dirPath)  throws IOException;
 }

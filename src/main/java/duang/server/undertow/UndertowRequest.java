@@ -6,8 +6,13 @@ import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import duang.Duang;
+import duang.exception.DuangException;
+import duang.mvc.common.dto.UploadFileDto;
 import duang.mvc.common.enums.HttpMethod;
-import duang.mvc.http.IRequest;
+import duang.server.abstracts.AbstractRequest;
+import duang.spi.IAdvice;
+import duang.utils.DuangId;
 import duang.utils.ToolsKit;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.FormData;
@@ -15,34 +20,25 @@ import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HeaderValues;
-import io.undertow.util.HttpString;
-import sun.nio.cs.ISO_8859_2;
+import io.undertow.util.Headers;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 转换Undertow请求
  *
  * @author Laotang
  */
-public class UndertowRequest implements IRequest {
+public class UndertowRequest extends AbstractRequest {
 
     private static final Log LOGGER = LogFactory.get(UndertowRequest.class);
-
-    private String requestId;
     private HttpServerExchange exchange;
-    private Map<String,String> headerMap = new ConcurrentHashMap<>();
-    private Map<String,String> paramMap = new ConcurrentHashMap<>();
 
     public UndertowRequest(HttpServerExchange exchange) {
         this.requestId = createRequestId();
@@ -162,33 +158,41 @@ public class UndertowRequest implements IRequest {
     }
 
     @Override
-    public void getFile() throws IOException {
+    public List<UploadFileDto> getUploadFiles(String serverDirectory) throws DuangException, IOException {
         FormDataParser parser = FormParserFactory.builder().build().createParser(exchange);
+        // 防止乱码
+        parser.setCharacterEncoding(Charset.defaultCharset().toString());
         FormData formData = parser.parseBlocking();
-        Charset ISO_8859_1 = Charset.forName("ISO_8859_1");
-        for (String name : formData) {
-            Deque<FormData.FormValue> formValues = formData.get(name);
-            // 判断formValue是不是文件
-            if (formValues.getFirst().isFileItem()) {
-                FormData.FileItem fileItem = formValues.getFirst().getFileItem();
-                // 获取文件名，这种方式获取的是原文件名，带后缀的
-                // 还可以从formValues.getFirst().getFileItem().getFile().getFileName()里获取文件名，不过这个文件名已经被重新命名了，而且还不带后缀
-                /**解决文件上传乱码
-                 *  1，在header头Content-Type里添加 ;charset=utf-8
-                 *  2，在代码里 new String(fileName.getBytes(ISO_8859_1), Charset.defaultCharset());
-                  */
-                String fileName = new String(formValues.getFirst().getFileName().getBytes(ISO_8859_1), Charset.defaultCharset());
-                // 创建一个输出流，将文件保存到本地
-                FileOutputStream fos = new FileOutputStream(new File("E:\\app\\" + fileName));
-                // 保存文件
-                Files.copy(fileItem.getFile(), fos);
-                fos.close();
-                System.out.println(fileName);
-            } else {
-                paramMap.put(name, new String(formValues.getFirst().getValue().getBytes(ISO_8859_1), Charset.defaultCharset()));
-                System.out.println("参数名：" + name + " 值：" + new String(formValues.getFirst().getValue().getBytes(ISO_8859_1), Charset.defaultCharset()));
+//        Charset characterEncoding = getCharacterEncoding();
+        List<UploadFileDto> uploadFileDtoList = new ArrayList<>();
+        try {
+            for (String name : formData) {
+                Deque<FormData.FormValue> formValues = formData.get(name);
+                // 判断formValue是不是文件
+                if (formValues.getFirst().isFileItem()) {
+                    FormData.FormValue formValue = formValues.getFirst();
+                    FormData.FileItem fileItem = formValue.getFileItem();
+                    String parameterName = "未知";
+                    String oiriginalName = formValue.getFileName();
+                    String fileName = DuangId.get().toString() + "." + oiriginalName.substring(oiriginalName.lastIndexOf(".") + 1);
+                    String contentType = headerMap.get(Headers.CONTENT_TYPE);
+                    long fileSize = fileItem.getFileSize();
+                    UploadFileDto uploadFileDto = new UploadFileDto(parameterName, serverDirectory, fileName, oiriginalName, name, contentType, fileSize);
+                    isAllowUpload(uploadFileDto);
+                    // 获取文件名，这种方式获取的是原文件名，带后缀的
+                    // 还可以从formValues.getFirst().getFileItem().getFile().getFileName()里获取文件名，不过这个文件名已经被重新命名了，而且还不带后缀
+                    // 创建一个输出流，将文件保存到本地
+                    FileOutputStream fos = new FileOutputStream(uploadFileDto.getFile());
+                    // 保存文件
+                    Files.copy(fileItem.getFile(), fos);
+                    fos.close();
+                    uploadFileDtoList.add(uploadFileDto);
+                }
             }
+        } catch (DuangException e) {
+            throw new DuangException("文件不允许上传，请检查实现了IAdvice接口类的handler方法。异常信息：" + e.getMessage());
         }
+        return uploadFileDtoList;
     }
 
     private void createRequestHeaderMap() {
@@ -208,11 +212,12 @@ public class UndertowRequest implements IRequest {
     private void createRequestParamMap() {
         Map<String, Deque<String>> pathParamMap = exchange.getPathParameters();
         Map<String, Deque<String>> queryParamMap = exchange.getQueryParameters();
-        createReqMap(pathParamMap);
-        createReqMap(queryParamMap);
+        createRequestParamMap0(pathParamMap);
+        createRequestParamMap0(queryParamMap);
+        createRequestParamMap1(FormParserFactory.builder().build().createParser(exchange));
     }
 
-    private void createReqMap(Map<String, Deque<String>> subMap) {
+    private void createRequestParamMap0(Map<String, Deque<String>> subMap) {
         if (ToolsKit.isEmpty(subMap)) {
             return;
         }
@@ -225,4 +230,36 @@ public class UndertowRequest implements IRequest {
             }
         }
     }
+
+    private void createRequestParamMap1(FormDataParser parser) {
+        parser.setCharacterEncoding(Charset.defaultCharset().toString());
+        try {
+            FormData formData = parser.parseBlocking();
+            for(Iterator<String> iterator = formData.iterator(); iterator.hasNext();) {
+                String name = iterator.next();
+                FormData.FormValue formValue = formData.getFirst(name);
+                if (!formValue.isFileItem()) {
+                    paramMap.put(name, formValue.getValue());
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("取上传文件参数时出错: " + e.getMessage(), e);
+        }
+    }
+
+    /**解决文件上传乱码
+     *  1，在header头Content-Type里添加 ;charset=utf-8
+     *  2，在代码里 new String(fileName.getBytes(ISO_8859_1), Charset.defaultCharset());
+     */
+    private String getFormDataParamName(String name, Charset charset) {
+        if (ISO_8859_1.equals(charset)) {
+            return new String(name.getBytes(ISO_8859_1), Charset.defaultCharset());
+        }
+        return name;
+    }
+
+//    private Charset getCharacterEncoding() {
+//        String contentType = headerMap.get(Headers.CONTENT_TYPE.toString());
+//        return contentType == null ? ISO_8859_1 : Charset.forName(Headers.extractQuotedValueFromHeader(contentType, "charset"));
+//    }
 }

@@ -1,10 +1,8 @@
 package duang.spi;
 
-import cn.hutool.core.util.IdUtil;
 import duang.exception.DuangException;
 import duang.mvc.common.dto.HeadDto;
 import duang.mvc.common.dto.ReturnDto;
-import duang.utils.DuangId;
 import duang.utils.ToolsKit;
 
 /**
