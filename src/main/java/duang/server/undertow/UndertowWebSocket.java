@@ -19,10 +19,20 @@ import org.slf4j.MDC;
 
 import java.io.IOException;
 
+/**
+ * UndertowWebSocket
+ *
+ * @author Laotang
+ */
 public class UndertowWebSocket implements  WebSocketConnectionCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UndertowWebSocket.class);
 
+    /**
+     *  链接成功回调方法
+     * @param exchange WebSocketHttpExchange对象
+     * @param channel WebSocketChannel对象
+     */
     @Override
     public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
 
@@ -83,6 +93,11 @@ public class UndertowWebSocket implements  WebSocketConnectionCallback {
         channel.resumeReceives();
     }
 
+    /**
+     * 发送消息到客户端
+     * @param resultObj 发送消息
+     * @param channel   渠道对象
+     */
     public static void send(Object resultObj, Object channel) {
         if (resultObj instanceof String) {
             LOGGER.warn(String.valueOf(resultObj));
@@ -90,6 +105,13 @@ public class UndertowWebSocket implements  WebSocketConnectionCallback {
         WebSockets.sendText(ResponseBodyAdvice.duang().write(resultObj), (WebSocketChannel) channel, null);
     }
 
+    /**
+     * 创建WebSocketSession
+     * @param uri ws的uri路径
+     * @param channel  WebSocketChannel对象
+     * @param message 接收到的消息
+     * @return
+     */
     private static WebSocketSession createWebSocketSession(String uri, WebSocketChannel channel, String message) {
         WebSocketSession<WebSocketChannel> socketSession = new WebSocketSession(uri);
         socketSession.setMessage(message);
@@ -98,6 +120,10 @@ public class UndertowWebSocket implements  WebSocketConnectionCallback {
         return socketSession;
     }
 
+    /**
+     * create HeadDto，返回内容格式与http保持一致
+     * @param socketSession
+     */
     private static void createHeadDto(WebSocketSession socketSession) {
         HeadDto headDto = new HeadDto();
         headDto.setRequestId(socketSession.getId());

@@ -8,6 +8,13 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ *  WebSocket 抽象类
+ *  每一个BaseWebSocket类都要继承此抽象类或实现 IWebSocket
+ * @param <T>  接收请求处理逻辑后，需要返回的内容对象
+ *
+ * @author Laotang
+ */
 public abstract class BaseWebSocket<T> implements IWebSocket<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseWebSocket.class);
