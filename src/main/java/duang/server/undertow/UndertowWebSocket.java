@@ -2,7 +2,6 @@ package duang.server.undertow;
 
 import cn.hutool.core.date.DateUtil;
 import duang.exception.DuangException;
-import duang.mvc.common.beans.BeanFactory;
 import duang.mvc.common.core.IWebSocket;
 import duang.mvc.common.dto.HeadDto;
 import duang.mvc.handler.HandlerFactory;

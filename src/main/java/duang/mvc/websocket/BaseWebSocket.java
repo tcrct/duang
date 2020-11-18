@@ -5,9 +5,6 @@ import duang.mvc.common.core.IWebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  *  WebSocket 抽象类
  *  每一个BaseWebSocket类都要继承此抽象类或实现 IWebSocket
