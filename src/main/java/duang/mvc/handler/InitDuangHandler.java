@@ -1,8 +1,6 @@
 package duang.mvc.handler;
 
-import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.IdUtil;
 import duang.exception.DuangException;
 import duang.mvc.common.dto.HeadDto;
 import duang.mvc.http.IRequest;
@@ -26,7 +24,8 @@ public class InitDuangHandler implements IHandler {
         headDto.setRequestTime(DateUtil.now());
         headDto.setUri(request.uri());
         ToolsKit.setThreadLocalDto(headDto);
-        MDC.put(HandlerFactory.LOGBACK_REQ_KEY, request.uri());
+        MDC.put(HandlerFactory.LOGBACK_REQUEST_URI, request.uri());
+        MDC.put(HandlerFactory.LOGBACK_TRACE_ID, request.requestId());
     }
 
 }

@@ -129,7 +129,7 @@ public class UndertowWebSocket implements  WebSocketConnectionCallback {
         headDto.setRequestTime(DateUtil.now());
         headDto.setUri(socketSession.getUri());
         ToolsKit.setThreadLocalDto(headDto);
-        MDC.put(HandlerFactory.LOGBACK_REQ_KEY, headDto.getUri());
+        MDC.put(HandlerFactory.LOGBACK_REQUEST_URI, headDto.getUri());
     }
 }
 

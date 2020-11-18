@@ -27,7 +27,8 @@ import java.util.*;
 public class HandlerFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HandlerFactory.class);
-    public static final String LOGBACK_REQ_KEY = "request.uri";
+    public static final String LOGBACK_REQUEST_URI = "request.uri";
+    public static final String LOGBACK_TRACE_ID = "traceId";
 
     /**
      * Controller执行前的处理器集合
@@ -96,7 +97,8 @@ public class HandlerFactory {
      */
     public static void doAfterChain(IRequest request, IResponse response) {
         if (HANDLERS_AFTER.isEmpty()) {
-            MDC.remove(LOGBACK_REQ_KEY);
+            MDC.remove(LOGBACK_REQUEST_URI);
+            MDC.remove(LOGBACK_TRACE_ID);
             return;
         }
         IHandler handler = null;
@@ -108,7 +110,8 @@ public class HandlerFactory {
         } catch (Exception e) {
             LOGGER.warn("执行自定义的请求拦截处理器[{}]时抛出异常: {}", handler.getClass().getName(), e.getMessage(), e);
         } finally {
-            MDC.remove(LOGBACK_REQ_KEY);
+            MDC.remove(LOGBACK_REQUEST_URI);
+            MDC.remove(LOGBACK_TRACE_ID);
         }
     }
 

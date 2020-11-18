@@ -2,11 +2,11 @@
 <configuration>
 	<property name="logDirPattern" value="E:\\logs" />
 	<property name="logFileNamePattern" value="${logDirPattern}/%d{yyyyMM}/%d{dd}" />
-	<define name="requestId" class="duang.spi.RequestIdDefiner"/>
+<!--	<define name="requestId" class="duang.spi.RequestIdDefiner"/>-->
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>
-				%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} %L - [${requestId}] : %msg%n
+				%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%thread] %-5level %logger{80} %L - %msg%n
 			</pattern>
 		</encoder>
 	</appender>
@@ -25,11 +25,11 @@
 				</rollingPolicy>
 				<layout class="ch.qos.logback.classic.PatternLayout">
 					<Pattern>
-						%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} %L - [${requestId}] : %msg%n
+						%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%thread] %-5level %logger{80} %L - %msg%n
 					</Pattern>
 				</layout>
 				<encoder>
-					<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} %L - [${requestId}] : %msg%n</pattern>
+					<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}][%thread] %-5level %logger{80} %L - %msg%n</pattern>
 					<charset class="java.nio.charset.Charset">UTF-8</charset>
 				</encoder>
 			</appender>
