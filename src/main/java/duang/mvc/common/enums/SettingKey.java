@@ -9,6 +9,7 @@ package duang.mvc.common.enums;
 public enum SettingKey implements IEnum {
 
     MAPPING_PREFIX_PATH("mapping.prefix.path", "","映射前缀，如设置该配置，则会在将该值添加到所有的映射路径的第一级目录位置"),
+    WS_MAPPING_PREFIX_PATH("ws.mapping.prefix.path", "","WebSocket映射前缀，如设置该配置，则会在将该值添加到所有的映射路径的第一级目录位置"),
     CHARSET("charset", "UTF-8", "系统统一编码"),
     DATETIME_FORMAT("datetime.format","yyyy-MM-dd HH:mm:ss", "时间格式"),
     SCAN_PACKAGE_PATH("scan.package.path", "", "")

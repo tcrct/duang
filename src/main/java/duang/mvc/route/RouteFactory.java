@@ -60,10 +60,7 @@ final public class RouteFactory {
         }
 
         // 是否有设置统一的映射前缀
-        String mappingPrefixPath = SettingKit.duang().get(SettingKey.MAPPING_PREFIX_PATH.getKey());
-        if (ToolsKit.isNotEmpty(mappingPrefixPath)) {
-            mappingPrefixPath = mappingPrefixPath.startsWith("/") ? mappingPrefixPath : "/"+mappingPrefixPath;
-        }
+        String mappingPrefixPath = ToolsKit.getMappingPrefixPath();
         Set<String> excludedMethodName = ToolsKit.buildExcludedMethodName();
         for (Class<?> controllerClass : controllerClassSet) {
             // 创建controller的映射对象
@@ -177,10 +174,4 @@ final public class RouteFactory {
             LOGGER.warn(entry.getKey());
         }
     }
-
-    public static void invoke() {
-
-    }
-
-
 }

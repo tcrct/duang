@@ -5,6 +5,7 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializeFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import duang.mvc.common.dto.HeadDto;
+import duang.mvc.common.enums.SettingKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import java.util.*;
 public class ToolsKit {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ToolsKit.class);
+    private static HeadDto headDto = null;
 
     public static SerializerFeature[] serializerFeatureArray = {
             SerializerFeature.QuoteFieldNames,
@@ -153,4 +155,28 @@ public class ToolsKit {
         return JSON.parseArray(jsonText, clazz);
     }
 
+    /**
+     * 是否有设置统一的映射前缀
+     * @return
+     */
+    public static String getMappingPrefixPath() {
+        String mappingPrefixPath = SettingKit.duang().get(SettingKey.MAPPING_PREFIX_PATH.getKey());
+        if (ToolsKit.isNotEmpty(mappingPrefixPath)) {
+            mappingPrefixPath = mappingPrefixPath.startsWith("/") ? mappingPrefixPath : "/"+mappingPrefixPath;
+            if (mappingPrefixPath.endsWith("/")) {
+                mappingPrefixPath = mappingPrefixPath.substring(0, mappingPrefixPath.length()-1);
+            }
+        }
+        return mappingPrefixPath;
+    }
+    public static String getWsMappingPrefixPath() {
+        String mappingPrefixPath = SettingKit.duang().get(SettingKey.WS_MAPPING_PREFIX_PATH.getKey(), "/ws");
+        if (ToolsKit.isNotEmpty(mappingPrefixPath)) {
+            mappingPrefixPath = mappingPrefixPath.startsWith("/") ? mappingPrefixPath : "/"+mappingPrefixPath;
+            if (mappingPrefixPath.endsWith("/")) {
+                mappingPrefixPath = mappingPrefixPath.substring(0, mappingPrefixPath.length()-1);
+            }
+        }
+        return mappingPrefixPath;
+    }
 }

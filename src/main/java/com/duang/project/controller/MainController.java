@@ -4,6 +4,8 @@ import cn.hutool.core.util.IdUtil;
 import duang.mvc.common.annotation.Controller;
 import duang.mvc.common.annotation.Mapping;
 import duang.mvc.common.core.BaseController;
+import duang.mvc.websocket.WebSocketKit;
+import duang.utils.ToolsKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +25,7 @@ public class MainController extends BaseController {
                                @Max(value = 2, message = "最大值不能大于2") Integer age) {
         LOGGER.info("{}", id);
         LOGGER.info("{}", age);
+        WebSocketKit.duang().key("/ws/main").message("findByid: " + id).send();
         return IdUtil.objectId();
     }
 

@@ -1,9 +1,6 @@
 package duang.mvc.common.enums;
 
-import duang.mvc.common.annotation.Controller;
-import duang.mvc.common.annotation.Handler;
-import duang.mvc.common.annotation.Plugin;
-import duang.mvc.common.annotation.Service;
+import duang.mvc.common.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +17,7 @@ public enum ScanAnnotation {
     SERVICE(Service.class),
     HANDLER(Handler.class),
     PLUGIN(Plugin.class),
-
+    WEBSOCKET(WebSocket.class),
     ;
 
     private Class<?> annotationClass;

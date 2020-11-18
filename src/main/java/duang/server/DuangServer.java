@@ -1,31 +1,22 @@
 package duang.server;
 
 import duang.mvc.common.enums.ServerType;
-import duang.mvc.plugin.PluginFactory;
-import duang.mvc.route.RouteFactory;
-import duang.utils.ScanFactory;
 
 public class DuangServer {
 
     private String host = "0.0.0.0";
     private Integer port = 8080;
     private IWebServer server;
+    private Integer webSocketPort = 7070;
 
     private static class SingletonHolder {
         private static final DuangServer INSTANCE = new DuangServer();
     }
+
     private DuangServer() {
-
         StartContextListener.duang().start();
-
-        // 扫描类
-//        ScanFactory.scan();
-        // 初始化插件
-//        PluginFactory.initPlugin();
-        // 初始化路由
-//        RouteFactory.initRoute();
-        //
     }
+
     public static DuangServer duang() {
         return SingletonHolder.INSTANCE;
     }
@@ -34,8 +25,12 @@ public class DuangServer {
         this.host = host;
         return this;
     }
-    public DuangServer port(Integer port) {
-        this.port = port;
+    public DuangServer port(Integer httpPort) {
+        this.port = httpPort;
+        return this;
+    }
+    public DuangServer webSocket(Integer webSocketPort) {
+        this.webSocketPort = webSocketPort;
         return this;
     }
     public DuangServer type(ServerType serverType) {

@@ -43,5 +43,9 @@ public class SettingKit {
         return value;
     }
 
+    public String get(String key, String defaultValue) {
+        return SETTING.getStr(key, defaultValue);
+    }
+
 
 }

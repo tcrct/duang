@@ -6,6 +6,7 @@ import duang.ioc.IocFactory;
 import duang.mvc.common.beans.BeanFactory;
 import duang.mvc.plugin.PluginFactory;
 import duang.mvc.route.RouteFactory;
+import duang.mvc.websocket.WebSocketFactory;
 import duang.utils.ScanFactory;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class StartContextListener {
             this.add(PluginFactory.class);
             this.add(IocFactory.class);
             this.add(RouteFactory.class);
+            this.add(WebSocketFactory.class);
         }
     };
 

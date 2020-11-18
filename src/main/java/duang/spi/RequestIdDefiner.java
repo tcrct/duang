@@ -7,7 +7,6 @@ import duang.utils.ToolsKit;
 public class RequestIdDefiner extends PropertyDefinerBase {
     @Override
     public String getPropertyValue() {
-        return ToolsKit.getThreadLocalDto().getRequestId();
-//        return DuangId.get().toString();
+        return DuangId.get().toString();
     }
 }
